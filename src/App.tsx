@@ -1,0 +1,59 @@
+import React, { useEffect, useState } from "react";
+import { Text, Box, useInput } from "ink";
+import { getAllContexts, getCurrentContext, useContext } from "./kubectl.js";
+
+function App() {
+  const [currentContext, setCurrentContext] = useState("");
+  const [allContexts, setAllContexts] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  async function initialize() {
+    const allContexts = await getAllContexts();
+    const currentContext = await getCurrentContext();
+    const selectedIndex = allContexts.indexOf(currentContext);
+
+    setAllContexts(allContexts);
+    setSelectedIndex(selectedIndex);
+    setCurrentContext(currentContext);
+  }
+
+  useInput(async (input, key) => {
+    if (key.upArrow) {
+      setSelectedIndex(
+        (prev) => (prev + allContexts.length - 1) % allContexts.length,
+      );
+    }
+    if (key.downArrow) {
+      setSelectedIndex((prev) => (prev + 1) % allContexts.length);
+    }
+
+    if (input === " " || key.return) {
+      useContext(allContexts[selectedIndex] as string);
+      await initialize();
+    }
+
+    if (key.escape || input === "q") {
+      process.exit(0);
+    }
+  });
+
+  useEffect(() => {
+    initialize();
+    return () => { process.stdout.write("\x1b[H\x1b[2J"); }
+  }, []);
+
+  return (
+    <Box flexDirection="column">
+      <Text bold>Select K8s Context (Enter to switch, q to quit):</Text>
+
+      {allContexts.map((context, i) => (
+        <Text key={context} inverse={selectedIndex === i}>
+          {context === currentContext ? " * " : "   "}
+          {context}
+        </Text>
+      ))}
+    </Box>
+  );
+}
+
+export default App;
