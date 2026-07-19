@@ -18,6 +18,7 @@ function App() {
   async function initialize() {
     const allContexts = await getAllContexts();
     setAllContexts(allContexts);
+    setQuery("");
 
     if (allContexts.length > 0) {
       const currentContext = await getCurrentContext();
@@ -44,7 +45,6 @@ function App() {
         Math.min(filteredContexts.length - 1, prev + 1),
       );
     } else if (key.return) {
-      setQuery("");
       useContext(filteredContexts[selectedIndex] as string);
       await initialize();
     } else if (key.backspace) {
