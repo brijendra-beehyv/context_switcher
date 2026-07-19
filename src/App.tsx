@@ -45,7 +45,7 @@ function App() {
         Math.min(filteredContexts.length - 1, prev + 1),
       );
     } else if (key.return) {
-      useContext(filteredContexts[selectedIndex] as string);
+      await useContext(filteredContexts[selectedIndex] as string);
       await initialize();
     } else if (key.backspace) {
       setQuery((prev) => (prev.length > 0 ? prev.slice(0, -1) : prev));
