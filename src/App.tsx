@@ -17,21 +17,22 @@ function App() {
 
   async function initialize() {
     const allContexts = await getAllContexts();
-    setAllContexts(allContexts);
-    setQuery("");
 
     if (allContexts.length > 0) {
       const currentContext = await getCurrentContext();
       const selectedIndex = allContexts.indexOf(currentContext);
-
+      
       setSelectedIndex(selectedIndex);
       setCurrentContext(currentContext);
     }
+
+    setAllContexts(allContexts);
+    setQuery("");
   }
 
   useInput(async (input, key) => {
     if (key.escape) {
-      exit(0);
+      exit(currentContext);
     }
 
     if (allContexts.length <= 0) {

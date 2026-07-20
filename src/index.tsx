@@ -4,4 +4,7 @@ import App from "./App.js";
 
 const { waitUntilExit } = render(<App />, { alternateScreen: true });
 
-await waitUntilExit();
+const currentContext = await waitUntilExit();
+if (typeof currentContext === "string") {
+    console.log("Current context:", currentContext);
+}
